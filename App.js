@@ -1,24 +1,58 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+
 import Main from './pages/main';
 import CameraWidow from './pages/camera';
+import ImageGallery from './pages/imageGallery';
+
+
+const Drawer = createDrawerNavigator();
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'rgb(28, 28, 30)',
+    background: 'rgb(242, 242, 242)',
+    card: '#FCF6F5',
+    text: 'rgb(28, 28, 30)',
+    border: 'rgb(199, 199, 204)',
+    notification: 'blue',
+  },
+};
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      {/* <Main/> */}
-      <CameraWidow/>
-      {/* <Text>Open up App.js to start working on your app!</Text> */}
-      <StatusBar style="auto" />
-    </View>
+    
+
+      <NavigationContainer theme={MyTheme}>
+
+        <Drawer.Navigator screenOptions={{  }}>
+
+          <Drawer.Screen name="Home" component={Main} />
+          <Drawer.Screen name="Camera" component={CameraWidow} />
+          <Drawer.Screen name="Image Gallery" component={ImageGallery} />
+
+        </Drawer.Navigator>
+
+      </NavigationContainer>
+
+      // {/* <Main/> */}
+      // {/* <CameraWidow/> */}
+      // {/* <Text>Open up App.js to start working on your app!</Text> */}
+      // {/* <StatusBar style="auto" /> */}
+    
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FCF6F5',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#FCF6F5',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });

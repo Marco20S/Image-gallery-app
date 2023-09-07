@@ -1,8 +1,10 @@
 
-import { View, Text, StyleSheet, Pressable, TouchableOpacity, SafeAreaView, Image, Button } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image, Button } from 'react-native'
 import { Camera } from 'expo-camera'
 import { shareAsync } from 'expo-sharing'
 import *  as MediaLibrary from 'expo-media-library'
+import * as SQLite from 'expo-sqlite';
+import { openDatabase } from 'react-native-sqlite-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { React, useEffect, useRef, useState } from 'react'
@@ -19,6 +21,45 @@ export default function CameraWidow() {
     const [mediaPermission, setMediaPermission] = useState()
     const [photo, setPhoto] = useState()
 
+    const database = SQLite.openDatabase({
+        name:'myImageDatabase',
+        location:"default"
+    });
+
+    // sqlite database to store images
+
+    const createTable = () =>{
+        database.transaction((tx) => {
+            tx.executeSql(
+              'CREATE TABLE IF NOT EXISTS ImageGallery (id INTEGER PRIMARY KEY AUTOINCREMENT, image TEXT, data TEXT)'
+              
+            );
+          });
+    }
+   
+
+    // save image intyo database
+
+    
+    const saveImage = () =>{
+        const imageURI = photo.uri
+        database.transaction((tx) => {
+            tx.executeSql(
+              'INSERT INTO ImageGallery (image, data ) values(?,?)',
+              [imageURI, "Data"]
+            ),
+
+            (t,error) =>{
+                console.log(error);
+            },
+            (t,success) =>{
+                console.log("Added", success);
+            }
+
+
+          });
+    }
+
 
     //camera permissions
     useEffect(() => {
@@ -31,6 +72,15 @@ export default function CameraWidow() {
 
         })()
     }, [])
+
+    //sqlite Table
+    useEffect(()=>{
+
+        createTable()
+
+        getImage()
+
+    },[])
 
 
 
@@ -71,6 +121,8 @@ export default function CameraWidow() {
                 setPhoto(undefined)
             })
 
+            saveImage();
+
         }
 
         return (
@@ -93,6 +145,12 @@ export default function CameraWidow() {
             </SafeAreaView>
         )
     }
+
+
+    
+
+
+
 
 
     return (

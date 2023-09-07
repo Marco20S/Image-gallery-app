@@ -1,13 +1,35 @@
+import 'react-native-gesture-handler';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { Camera } from 'expo-camera'
 import { shareAsync } from 'expo-sharing'
 import *  as MediaLibrary from 'expo-media-library'
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
+
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { React, useEffect, useRef, useState } from 'react'
 
+import CameraWidow from './camera';
+import ImageGallery from './imageGallery';
+
+const Drawer = createDrawerNavigator();
+
+function MyDrawer () {
+    return (
+
+        <NavigationContainer>
+            <Drawer.Navigator>
+                <Drawer.Screen name="Camera" component={CameraWidow} />
+                <Drawer.Screen name="Image Gallery" component={ImageGallery} />
+            </Drawer.Navigator>
+        </NavigationContainer>
+    );
+}
+
 export default function Main() {
 
+    
     // let cameraRef = useRef
 
     // const [cameraPermission, setCameraPermission] = useState()
@@ -31,14 +53,16 @@ export default function Main() {
     //     return <Text>Permissions have been denied. Please grant permissions in order to use camera.</Text>
 
     // }
+
+
     return (
         <View style={styles.Container}>
 
             <View style={styles.TopContainer}>
 
-                <TouchableOpacity style={{ alignItems: "flex-start", alignSelf: 'flex-start', paddingLeft: 20 }} >
+                {/* <TouchableOpacity onPress={() => { MyDrawer() }} style={{ alignItems: "flex-start", alignSelf: 'flex-start', paddingLeft: 20 }} >
                     <Entypo name="menu" size={24} color="#7b9acc" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 <View style={styles.TopInnerContainer}>
                     <Text style={{ fontSize: 20, color: "gray" }}>Image Gallery App</Text>
