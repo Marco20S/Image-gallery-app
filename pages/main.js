@@ -27,7 +27,9 @@ function MyDrawer () {
     );
 }
 
-export default function Main() {
+export default function Main({navigation}) {
+
+    
 
     
     // let cameraRef = useRef
@@ -75,7 +77,7 @@ export default function Main() {
 
                 <View style={styles.actionSignButton}>
 
-                    <TouchableOpacity style={styles.actionButton} >
+                    <TouchableOpacity onPress={() => navigation.navigate('Camera')} style={styles.actionButton} >
                         <Text style={{ color: 'white' }} >
                             Take Picture</Text>
                     </TouchableOpacity >

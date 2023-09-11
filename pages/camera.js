@@ -1,5 +1,5 @@
 
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image, Button } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image, Button, Alert } from 'react-native'
 import { Camera } from 'expo-camera'
 import { shareAsync } from 'expo-sharing'
 import *  as MediaLibrary from 'expo-media-library'
@@ -21,20 +21,33 @@ export default function CameraWidow() {
     const [mediaPermission, setMediaPermission] = useState()
     const [photo, setPhoto] = useState()
 
-    const database = SQLite.openDatabase({
-        name:'myImageDatabase',
-        location:"default"
-    });
+
+    //opening sql database
+    // const database = SQLite.openDatabase({
+    //     name:'myImageDatabase',
+    //     location:"default"
+    // });
+
+    const database = SQLite.openDatabase('myImageDatabase.db');
 
     // sqlite database to store images
 
     const createTable = () =>{
         database.transaction((tx) => {
             tx.executeSql(
-              'CREATE TABLE IF NOT EXISTS ImageGallery (id INTEGER PRIMARY KEY AUTOINCREMENT, image TEXT, data TEXT)'
+              'CREATE TABLE IF NOT EXISTS imageGallery (id INTEGER PRIMARY KEY AUTOINCREMENT, image TEXT, data TEXT)'
               
             );
-          });
+          },
+          (error) =>{
+            console.log("error creating table", error);
+            // Alert.alert('Success', 'Image was saved successfully')
+        },
+        
+        (a,b) =>{
+            console.log("Created ", b);
+            // Alert.alert('Success', 'Image was saved successfully')
+        });
     }
    
 
@@ -42,18 +55,20 @@ export default function CameraWidow() {
 
     
     const saveImage = () =>{
-        const imageURI = photo.uri
+        const imageURI = photo.uri;
+        console.log(imageURI);
         database.transaction((tx) => {
             tx.executeSql(
-              'INSERT INTO ImageGallery (image, data ) values(?,?)',
+              'INSERT INTO imageGallery (image, data ) values(?,?)',
               [imageURI, "Data"]
             ),
-
-            (t,error) =>{
-                console.log(error);
+            (txObj,error) =>{
+                console.log("Errror", error);
+               
             },
-            (t,success) =>{
-                console.log("Added", success);
+            (txObj,success) =>{
+                console.log("Added");
+                // Alert.alert('Success', 'Image was saved successfully')
             }
 
 
@@ -78,7 +93,19 @@ export default function CameraWidow() {
 
         createTable()
 
-        getImage()
+        database.transaction((tx)=>{
+            tx.executeSql('SELECT * FROM imageGallery',null,
+            (txObj,results)=>{
+                 console.log('res',results.rows._array);
+            },
+            (txObj,error)=>{
+                 console.log(error);
+            },
+            
+            )
+        })
+
+        // getImage()
 
     },[])
 
@@ -119,6 +146,7 @@ export default function CameraWidow() {
 
             MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
                 setPhoto(undefined)
+                // saveImage(photo.uri);
             })
 
             saveImage();
